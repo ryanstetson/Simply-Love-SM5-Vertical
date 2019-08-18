@@ -20,28 +20,10 @@ af[#af+1] = LoadActor("./WhoIsCurrentlyWinning.lua")
 
 for player in ivalues( GAMESTATE:GetHumanPlayers() ) do
 
-	local pn = ToEnumShortString(player)
-
-	-- Use this opportunity to create an empty table for this player's gameplay stats for this stage.
-	-- We'll store all kinds of data in this table that would normally only exist in ScreenGameplay so that
-	-- it can persist into ScreenEvaluation to eventually be processed, visualized, and complained about.
-	-- For example, per-column judgments, judgment offset data, highscore data, and so on.
-	--
-	-- Sadly, this Stages.Stats[stage_index] data structure is not documented anywhere. :(
-	SL[pn].Stages.Stats[SL.Global.Stages.PlayedThisGame+1] = {}
-
-	af[#af+1] = LoadActor("./TrackTimeSpentInGameplay.lua", player)
-	af[#af+1] = LoadActor("./JudgmentOffsetTracking.lua", player)
-
-	-- FIXME: refactor PerColumnJudgmentTracking to not be inside this loop
-	--        the Lua input callback logic shouldn't be duplicated for each player
-	af[#af+1] = LoadActor("./PerColumnJudgmentTracking.lua", player)
-
-	-- the SM5 engine causes NoteField columns in pump to overlap one another slightly
-	-- provide a themeside "fix" until it can be investigated in-engine
-	if GAMESTATE:GetCurrentGame():GetName() == "pump" then
-		af[#af+1] = LoadActor("./PumpColumnSpacingFix.lua", player)
-	end
+	t[#t+1] = LoadActor("./PerColumnJudgmentTracking.lua", player)
+	t[#t+1] = LoadActor("./ReceptorArrowsPosition.lua", player)
+	t[#t+1] = LoadActor("./JudgmentOffsetTracking.lua", player)
+	t[#t+1] = LoadActor("./ECS8.lua", player)
 end
 
 return af

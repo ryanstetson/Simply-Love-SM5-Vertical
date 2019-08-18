@@ -3,14 +3,13 @@
 UpdateDefaultGlobalOffset()
 
 local t = Def.ActorFrame{
-	-- GameplayReloadCheck is a kludgy global variable used in ScreenGameplay in.lua to check
-	-- if ScreenGameplay is being entered "properly" or being reloaded by a scripted mod-chart.
-	-- If we're here in SelectMusic, set GameplayReloadCheck to false, signifying that the next
-	-- time ScreenGameplay loads, it should have a properly animated entrance.
-	InitCommand=function(self) SL.Global.GameplayReloadCheck = false end,
-
-	PlayerJoinedMessageCommand=function(self, params)
-		UnjoinLateJoinedPlayer(params.Player)
+	OnCommand=function(self)
+		-- don't allow players latejoin the other side by disabling input for it
+		local other_player = OtherPlayer[GAMESTATE:GetMasterPlayerNumber()]
+		SCREENMAN:set_input_redirected(other_player, true)
+	end,
+	ChangeStepsMessageCommand=function(self, params)
+		self:playcommand("StepsHaveChanged", params)
 	end,
 
 	-- ---------------------------------------------------

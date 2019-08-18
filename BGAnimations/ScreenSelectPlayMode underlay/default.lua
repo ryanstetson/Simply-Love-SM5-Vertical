@@ -19,14 +19,10 @@ local Update = function(af, delta)
 	if index ~= cursor.index then
 		cursor.index = index
 
-		-- queue the appropriate command to the faux playfield, if needed
-		if ScreenName=="ScreenSelectPlayMode2" then
-			if choices[cursor.index+1] == "Marathon" then
-				af:queuecommand("FirstLoopMarathon")
-			else
-				af:queuecommand("FirstLoopRegular")
-			end
-		end
+		-- queue the appropiate command to the faux playfield, if needed
+		-- if choices[cursor.index+1] == "Marathon" or choices[cursor.index+1] == "Regular" then
+			af:queuecommand("FirstLoopRegular")
+		-- end
 
 		-- queue an "Update" to the AF containing the cursor, description text, score, and lifemeter actors
 		-- since they are children of that AF, they will also listen for that command
@@ -60,9 +56,13 @@ local t = Def.ActorFrame{
 	end,
 	OffCommand=function(self)
 		if ScreenName=="ScreenSelectPlayMode" or ScreenName=="ScreenSelectPlayModeThonk" then
-			-- set the GameMode now; we'll use it throughout the theme
-			-- to set certain Gameplay settings and determine which screen comes next
-			SL.Global.GameMode = choices[cursor.index+1]
+			-- set this based on choice, we'll use it for header text and determining
+			-- whether to force players into SreenSelectRelics
+			ECS.Mode = choices[cursor.index+1]
+
+			-- hardcode this to always be ITG windows for the ECS8 event
+			SL.Global.GameMode = "ITG"
+
 			-- now that a GameMode has been selected, set related preferences
 			SetGameModePreferences()
 			-- and reload the theme's Metrics
@@ -133,7 +133,7 @@ local t = Def.ActorFrame{
 	Def.BitmapText{
 		Font="Common Normal",
 		InitCommand=function(self)
-			self:zoom(0.5):halign(0):valign(0):xy(-95,-40)
+			self:zoom(0.825):halign(0):valign(0):xy(-130,-60):wrapwidthpixels(190)
 		end,
 		UpdateCommand=function(self)
 			self:settext( THEME:GetString("ScreenSelectPlayMode", choices[cursor.index+1] .. "Description") )
@@ -188,46 +188,19 @@ local t = Def.ActorFrame{
 
 	-- Score
 	Def.BitmapText{
-		Font="Wendy/_wendy monospace numbers",
+		Font="_wendy monospace numbers",
+		Text="77.41",
 		InitCommand=function(self)
-			self:zoom(0.17):xy(93,-51):diffusealpha(0)
+			self:zoom(0.225):xy(124,-68)
 		end,
 		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
-		UpdateCommand=function(self)
-			if ScreenName == "ScreenSelectPlayMode" then
-				if choices[cursor.index+1] == "FA+" then
-					self:settext("99.50")
-				else
-					self:settext("77.41")
-				end
-				self:stoptweening():linear(0.25):diffusealpha(1)
-			else
-				self:diffusealpha(1)
-				if SL.Global.GameMode == "FA+" then
-					self:settext("99.50")
-				else
-					self:settext("77.41")
-				end
-			end
-		end,
-
 	},
 	-- LifeMeter
 	Def.ActorFrame{
 		Name="LifeMeter",
 		InitCommand=function(self) self:diffusealpha(0):xy(51,-48):zoom(0.75) end,
 		OffCommand=function(self) self:sleep(0.4):linear(0.2):diffusealpha(0) end,
-		UpdateCommand=function(self)
-			if ScreenName == "ScreenSelectPlayMode" then
-				if choices[cursor.index+1] == "ITG" or choices[cursor.index+1] == "FA+" then
-					self:stoptweening():linear(0.25):diffusealpha(1)
-				else
-					self:stoptweening():linear(0.25):diffusealpha(0)
-				end
-			else
-				self:diffusealpha(1)
-			end
-		end,
+
 		-- lifemeter white border
 		Def.Quad{
 			InitCommand=function(self) self:zoomto(60,16) end

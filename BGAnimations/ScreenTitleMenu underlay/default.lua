@@ -10,6 +10,10 @@ local SongStats = ("%i %s %i %s, %i %s"):format(
 	THEME:GetString("ScreenTitleMenu", "courses")
 )
 
+-- re-enable both players now
+SCREENMAN:set_input_redirected(PLAYER_1, false)
+SCREENMAN:set_input_redirected(PLAYER_2, false)
+
 -- - - - - - - - - - - - - - - - - - - - -
 local game = GAMESTATE:GetCurrentGame():GetName();
 if game ~= "dance" and game ~= "pump" then
@@ -73,6 +77,9 @@ local af = Def.ActorFrame{
 	InitCommand=function(self)
 		--see: ./Scripts/SL_Init.lua
 		InitializeSimplyLove()
+
+		-- see: ./Scripts/ECS.lua
+		InitializeECS()
 
 		self:Center()
 	end,
