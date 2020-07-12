@@ -1,3 +1,10 @@
+-- le epic obs advanced scene switcher
+f = RageFileUtil.CreateRageFile()
+f:Open(THEME:GetCurrentThemeDirectory()..'/scene', 2) -- 2 = write
+f:Write("default")
+f:Close()
+f:destroy()
+
 local Players = GAMESTATE:GetHumanPlayers()
 local NumPanes = SL.Global.GameMode=="Casual" and 1 or 6
 

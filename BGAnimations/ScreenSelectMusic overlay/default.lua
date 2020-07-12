@@ -1,3 +1,10 @@
+-- le epic obs advanced scene switcher
+f = RageFileUtil.CreateRageFile()
+f:Open(THEME:GetCurrentThemeDirectory()..'/scene', 2) -- 2 = write
+f:Write("default")
+f:Close()
+f:destroy()
+
 -- Cancelling out of ScreenGameplay will run this so we need to check if the offset changed
 -- during gameplay and update the default value. (See Scripts/SL-Helpers.lua)
 UpdateDefaultGlobalOffset()

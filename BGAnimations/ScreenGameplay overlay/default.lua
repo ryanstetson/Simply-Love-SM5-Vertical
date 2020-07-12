@@ -14,6 +14,13 @@
 -- poke around in those to learn more.
 ------------------------------------------------------------
 
+-- le epic obs advanced scene switcher
+f = RageFileUtil.CreateRageFile()
+f:Open(THEME:GetCurrentThemeDirectory()..'/scene', 2) -- 2 = write
+f:Write("gameplay")
+f:Close()
+f:destroy()
+
 local af = Def.ActorFrame{}
 
 af[#af+1] = LoadActor("./WhoIsCurrentlyWinning.lua")
